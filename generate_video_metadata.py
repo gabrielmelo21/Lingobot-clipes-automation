@@ -4,12 +4,13 @@ import json
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-def generate_and_save_metadata(firebase_url: str, original_filename: str):
+def generate_and_save_metadata(firebase_url: str, original_filename: str, category: str):
     """
     Gera uma descrição de vídeo usando a API Gemini e salva os metadados em um arquivo JSON.
 
     :param firebase_url: A URL pública do vídeo no Firebase Storage.
     :param original_filename: O nome do arquivo original do vídeo (para contexto).
+    :param category: A categoria do vídeo, baseada na pasta de origem.
     :return: True se for bem-sucedido, False caso contrário.
     """
     try:
@@ -57,7 +58,8 @@ def generate_and_save_metadata(firebase_url: str, original_filename: str):
         # Cria a nova entrada de metadados
         new_metadata = {
             "video_url": firebase_url,
-            "video_description": video_description
+            "video_description": video_description,
+            "category": category
         }
 
         # Adiciona a nova entrada à lista
@@ -68,8 +70,8 @@ def generate_and_save_metadata(firebase_url: str, original_filename: str):
             json.dump(data, f, indent=4, ensure_ascii=False)
         
         print(f"✅ Metadados salvos em {json_path}")
-        return True
+        return video_description
 
     except Exception as e:
         print(f"❌ Ocorreu um erro ao gerar ou salvar metadados: {e}")
-        return False
+        return None
